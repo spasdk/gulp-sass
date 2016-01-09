@@ -1,0 +1,29 @@
+{
+    "name": "spa-gulp-sass",
+    "version": "1.3.0",
+    "description": "Compile CSS files from SASS sources.",
+    "author": {
+        "name": "Stanislav Kalashnik",
+        "email": "darkpark.main@gmail.com"
+    },
+    "repository": "spasdk/gulp-sass",
+    "scripts": {
+        "lint": "eslint *.js",
+        "jsdoc": "jsdoc --destination doc *.js readme.md"
+    },
+    "dependencies": {
+        "del": "2.*.*",
+        "node-sass": "3.*.*",
+        "spa-gulp": "spasdk/gulp"
+    },
+    "keywords": [
+        "spa",
+        "spasdk",
+        "framework",
+        "gulp",
+        "develop",
+        "task",
+        "sass"
+    ],
+    "license": "GPL-3.0"
+}
