@@ -33,7 +33,7 @@ module.exports = {
             indentWidth: 4,
 
             // whether to use cr, crlf, lf or lfcr sequence for line break
-            linefeed: 'lf',
+            lineBreak: 'lf',
 
             // how many digits after the decimal will be allowed
             precision: 2
