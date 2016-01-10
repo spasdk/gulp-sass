@@ -17,14 +17,14 @@ module.exports = {
         default: {
             // directory to look for source files
             // default: <project root>/src/sass
-            srcPath: 'sass',
+            sourcePath: 'sass',
 
             // main source entry point
-            srcFile: 'main.scss',
+            sourceFile: 'main.scss',
 
             // directory to store output files
             // default: <project root>/app/css
-            outPath: 'css',
+            targetPath: 'css',
 
             // whether to use space or tab character for indentation
             indentType: 'space',
@@ -42,7 +42,7 @@ module.exports = {
         // config for sass:develop task
         develop: {
             // intended output file name
-            outFile: 'develop.css',
+            targetFile: 'develop.css',
 
             // output format of the final CSS style
             // options: nested, expanded, compact, compressed
@@ -67,7 +67,7 @@ module.exports = {
         // config for sass:release task
         release: {
             // intended output file name
-            outFile: 'release.css',
+            targetFile: 'release.css',
 
             // output format of the final CSS style
             // options: nested, expanded, compact, compressed
