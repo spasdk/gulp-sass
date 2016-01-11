@@ -14,7 +14,7 @@
     "dependencies": {
         "del": "2.*.*",
         "node-sass": "3.*.*",
-        "spa-gulp": "spasdk/gulp"
+        "spa-gulp": "1.*.*"
     },
     "keywords": [
         "spa",
