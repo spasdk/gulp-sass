@@ -62,7 +62,7 @@ module.exports = {
             // bigger map file but no need to serve source scss files
             sourceMapContents: false,
 
-            // create task sass:develop:watch
+            // create task sass:watch:develop
             // to automatically rebuild on source files change
             watch: true
         },
