@@ -42,7 +42,7 @@ module.exports = {
             precision: 2
         },
 
-        // config for sass:develop task
+        // config for sass:build:develop task
         develop: {
             // intended output file name
             targetFile: 'develop.css',
@@ -67,7 +67,7 @@ module.exports = {
             watch: true
         },
 
-        // config for sass:release task
+        // config for sass:build:release task
         release: {
             // intended output file name
             targetFile: 'release.css',
