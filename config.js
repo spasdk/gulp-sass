@@ -13,8 +13,7 @@ module.exports = {
     active: true,
 
     // set of named configs for corresponding gulp tasks
-    // e.g. profile "develop" will inherit all options from "default"
-    // and create gulp task "sass:develop"
+    // each profile inherits all options from the "default" profile
     profiles: {
         // config to be extended by other profiles
         default: {
