@@ -1,6 +1,4 @@
 /**
- * Compile CSS files from SASS sources.
- *
  * @author Stanislav Kalashnik <darkpark.main@gmail.com>
  * @license GNU GENERAL PUBLIC LICENSE Version 3
  */
