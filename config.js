@@ -9,9 +9,6 @@
 
 // public
 module.exports = {
-    // turn on/off compilation
-    active: true,
-
     // set of named configs for corresponding gulp tasks
     // each profile inherits all options from the "default" profile
     profiles: {
