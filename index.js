@@ -77,8 +77,9 @@ function compile ( profile, done ) {
 }
 
 
-// do not create tasks
-if ( !config.active ) {
+// task set was turned off in gulp.js
+if ( !config ) {
+    // do not create tasks
     return;
 }
 
