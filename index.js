@@ -13,14 +13,34 @@ var fs       = require('fs'),
     del      = require('del'),
     tools    = require('spa-gulp/tools'),
     gulpName = 'sass',
-    config   = tools.load(path.join(__dirname, 'config'), gulpName),
-    pkgInfo  = require(process.env.PACKAGE),
+    //config   = tools.load(path.join(__dirname, 'config'), gulpName),
+    config   = tools.config(module, gulpName),
+    //pkgInfo  = require(process.env.PACKAGE),
     outFiles = [],
-    taskList = []
-    ;
+    taskList = [],
+    tasks = {};
 
 
-function compile ( profile, done ) {
+//console.log(module);
+
+//console.log('jadeConfig');
+//console.log(config);
+
+tasks[gulpName] = [gulpName + ':build'];
+tasks[gulpName + ':build'] = [];
+tasks[gulpName + ':watch'] = [];
+tasks[gulpName + ':clean'] = [];
+//tasks.build = [gulpName + ':build'];
+//tasks.watch = [gulpName + ':watch'];
+//tasks.clean = [gulpName + ':clean'];
+
+// public
+module.exports = tasks;
+
+return;
+
+
+function build ( profile, done ) {
     var config = {};
 
     // intended location of the output file
@@ -124,7 +144,7 @@ Object.keys(config.profiles).forEach(function ( profileName ) {
 
     // profile build task
     gulp.task(buildName, function ( done ) {
-        compile(profile, done);
+        build(profile, done);
     });
 
     // remove all generated html files
@@ -231,6 +251,6 @@ gulp.task(gulpName + ':config', function () {
 
 
 // public
-module.exports = {
-    compile: compile
-};
+//module.exports = {
+//    compile: compile
+//};
