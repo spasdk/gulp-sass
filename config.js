@@ -7,20 +7,23 @@
 
 'use strict';
 
-var path = require('path');
+var path   = require('path'),
+    extend = require('extend'),
+    config = require('spa-gulp/config');
 
-// set of named configs for corresponding gulp tasks
+
+// base config
 // each profile inherits all options from the "default" profile
-module.exports = {
+module.exports = extend(true, {}, config, {
     default: {
         // directory to look for source files
-        sourcePath: path.join(process.env.PATH_SRC, 'sass'),
+        sourcePath: path.join(config.default.sourcePath, 'sass'),
 
         // main source entry point
         sourceFile: 'main.scss',
 
         // directory to store output files
-        targetPath: path.join(process.env.PATH_APP, 'css'),
+        targetPath: path.join(config.default.targetPath, 'css'),
 
         // intended output file name
         targetFile: 'release.css',
@@ -66,4 +69,4 @@ module.exports = {
 
         watch: true
     }
-};
+});
