@@ -53,11 +53,7 @@ module.exports = extend(true, {}, config, {
 
         // whether to include the source files content in the source map
         // bigger map file but no need to serve source scss files
-        sourceMapContents: false,
-
-        // create watch task
-        // to automatically rebuild on source files change
-        watch: false
+        sourceMapContents: false
     },
 
     develop: {
@@ -67,6 +63,8 @@ module.exports = extend(true, {}, config, {
 
         sourceMap: 'develop.map',
 
-        watch: true
+        watch: [
+
+        ]
     }
 });
