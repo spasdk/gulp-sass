@@ -5,7 +5,7 @@
 
 'use strict';
 
-var fs       = require('fs'),
+var /*fs       = require('fs'),
     path     = require('path'),
     util     = require('util'),
     gulp     = require('gulp'),
@@ -18,24 +18,153 @@ var fs       = require('fs'),
     //pkgInfo  = require(process.env.PACKAGE),
     outFiles = [],
     taskList = [],
-    tasks = {};
+    tasks = {};*/
+
+    fs     = require('fs'),
+    path   = require('path'),
+    util   = require('util'),
+    sass   = require('node-sass'),
+    del    = require('del'),
+    Plugin = require('spa-gulp/lib/plugin'),
+    plugin = new Plugin({name: 'sass', entry: 'build', context: module});
 
 
-//console.log(module);
+// rework profile
+plugin.prepare = function ( name ) {
+    var profile = this.config[name];
 
-//console.log('jadeConfig');
-//console.log(config);
+    profile.data = [];
+    profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-app', 'sass', 'main.scss')));
+    profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component', 'sass', 'main.scss')));
+    profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component-page', 'sass', 'main.scss')));
+    profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-develop', 'sass', 'main.scss')));
+    profile.data.push(util.format('@import "%s";', profile.source));
+};
 
-tasks[gulpName] = [gulpName + ':build'];
-tasks[gulpName + ':build'] = [];
-tasks[gulpName + ':watch'] = [];
-tasks[gulpName + ':clean'] = [];
-//tasks.build = [gulpName + ':build'];
-//tasks.watch = [gulpName + ':watch'];
-//tasks.clean = [gulpName + ':clean'];
+
+// generate output file from profile
+plugin.build = function ( name, callback ) {
+    var data   = this.config[name],
+        config = {};
+
+    // intended location of the output file
+    config.outFile = data.target;
+
+    // array of paths that used to resolve @import declarations
+    config.includePaths = [process.env.PATH_ROOT];
+
+    // inherit options
+    config.data              = data.data.join('\n');
+    config.indentType        = data.indentType;
+    config.indentWidth       = data.indentWidth;
+    config.linefeed          = data.lineBreak;
+    config.outputStyle       = data.outputStyle;
+    config.precision         = data.precision;
+    config.sourceComments    = data.sourceComments    || false;
+    config.sourceMapContents = data.sourceMapContents || false;
+
+    // disable by default
+    config.sourceMapEmbed = false;
+
+    if ( data.sourceMap ) {
+        // file or inline
+        if ( typeof data.sourceMap === 'string' ) {
+            // source map file name
+            config.sourceMap = data.sourceMap;
+        } else {
+            // inline
+            config.sourceMapEmbed = true;
+        }
+    }
+
+    // do the magic
+    sass.render(config, function ( error, result ) {
+        if ( error ) {
+            // console log + notification popup
+            //tools.error(gulpName, error.formatted.trim());
+            return callback(error);
+        }
+
+        try {
+            // css
+            fs.writeFileSync(config.outFile, result.css);
+            // map
+            if ( config.sourceMap && result.map ) {
+                fs.writeFileSync(config.sourceMap, result.map);
+            }
+
+            callback(null);
+        } catch ( error ) {
+            // console log + notification popup
+            //tools.error(gulpName, error.message);
+            callback(error);
+        }
+    });
+};
+
+
+// create tasks for profiles
+plugin.profiles.forEach(function ( profile ) {
+    // add source data
+    plugin.prepare(profile.name);
+
+    profile.watch(
+        // main entry task
+        profile.task(plugin.entry, function ( done ) {
+            plugin.build(profile.name, function ( error ) {
+                //var message;
+
+                console.log(error);
+
+                /*if ( error ) {
+                    profile.notify({
+                        type: 'fail',
+                        info: error.message,
+                        title: plugin.entry,
+                        message: [message[0], '', message[message.length - 1]]
+                    });
+                } else {
+                    profile.notify({
+                        info: 'write '.green + profile.data.target,
+                        title: plugin.entry,
+                        message: profile.data.target
+                    });
+                }*/
+
+                done();
+            });
+        })
+    );
+
+    // remove the generated file
+    profile.task('clean', function () {
+        var files = [profile.data.target];
+
+        if ( typeof profile.data.sourceMap === 'string' ) {
+            files.push(profile.data.sourceMap);
+        }
+
+        files = del.sync(files);
+
+        if ( files.length ) {
+            // something was removed
+            profile.notify({
+                info: files.map(function ( item ) {
+                    return 'delete '.green + path.relative(process.cwd(), item);
+                }),
+                title: 'clean',
+                message: files.map(function ( item ) {
+                    return path.relative(process.cwd(), item);
+                })
+            });
+        }
+    });
+});
+
 
 // public
-module.exports = tasks;
+module.exports = plugin;
+
 
 return;
 
@@ -44,7 +173,7 @@ function build ( profile, done ) {
     var config = {};
 
     // intended location of the output file
-    config.outFile = path.join(process.env.PATH_ROOT, process.env.PATH_APP, profile.targetPath, profile.targetFile);
+    config.outFile = profile.target;
 
     // array of paths that used to resolve @import declarations
     config.includePaths = [process.env.PATH_ROOT];
@@ -66,7 +195,7 @@ function build ( profile, done ) {
         // file or inline
         if ( typeof profile.sourceMap === 'string' ) {
             // source map file name
-            config.sourceMap = path.join(process.env.PATH_ROOT, process.env.PATH_APP, profile.targetPath, profile.sourceMap);
+            config.sourceMap = profile.sourceMap;
         } else {
             // inline
             config.sourceMapEmbed = true;
@@ -138,7 +267,7 @@ Object.keys(config.profiles).forEach(function ( profileName ) {
     data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component', 'sass', 'main.scss')));
     data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component-page', 'sass', 'main.scss')));
     data.push(util.format('@import "%s";', path.join('node_modules', 'spa-develop', 'sass', 'main.scss')));
-    data.push(util.format('@import "%s";', path.join(process.env.PATH_SRC, profile.sourcePath, profile.sourceFile)));
+    data.push(util.format('@import "%s";', profile.source));
 
     profile.data = data.join('\n');
 
@@ -152,15 +281,15 @@ Object.keys(config.profiles).forEach(function ( profileName ) {
         var files = [];
 
         // protect from upper content deletion
-        if ( profile.targetFile ) {
+        if ( profile.target ) {
             // files to delete in clear task
-            files.push(path.join(process.env.PATH_APP, profile.targetPath || '', profile.targetFile));
+            files.push(profile.target);
         }
 
         // protect from upper content deletion
         if ( profile.sourceMap && typeof profile.sourceMap === 'string' ) {
             // files to delete in clear task
-            files.push(path.join(process.env.PATH_APP, profile.targetPath || '', profile.sourceMap));
+            files.push(profile.sourceMap);
         }
 
         tools.log('clean', del.sync(files));
@@ -172,7 +301,7 @@ Object.keys(config.profiles).forEach(function ( profileName ) {
         gulp.task(watchName, function ( done ) {
             gulp.watch([
                 //process.env.PACKAGE,
-                path.join(process.env.PATH_SRC, profile.sourcePath, '**', '*.scss')
+                path.join(process.env.PATH_SRC, profile.source, '**', '*.scss')
             ], [buildName]);
         });
 
