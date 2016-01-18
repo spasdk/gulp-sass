@@ -16,17 +16,11 @@ var path   = require('path'),
 // each profile inherits all options from the "default" profile
 module.exports = extend(true, {}, config, {
     default: {
-        // directory to look for source files
-        sourcePath: path.join(config.default.sourcePath, 'sass'),
+        // main entry point
+        source: path.join(config.default.source, 'sass', 'main.scss'),
 
-        // main source entry point
-        sourceFile: 'main.scss',
-
-        // directory to store output files
-        targetPath: path.join(config.default.targetPath, 'css'),
-
-        // intended output file name
-        targetFile: 'release.css',
+        // intended output file
+        target: path.join(config.default.target, 'css', 'release.css'),
 
         // output format of the final CSS style
         // options: nested, expanded, compact, compressed
@@ -57,14 +51,14 @@ module.exports = extend(true, {}, config, {
     },
 
     develop: {
-        targetFile: 'develop.css',
+        target: path.join(config.default.target, 'css', 'develop.css'),
 
         outputStyle: 'nested',
 
-        sourceMap: 'develop.map',
+        sourceMap: path.join(config.default.target, 'css', 'develop.map'),
 
         watch: [
-
+            path.join(config.default.source, 'sass', '**', '*.scss')
         ]
     }
 });
