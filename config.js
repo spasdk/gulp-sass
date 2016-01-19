@@ -47,7 +47,22 @@ module.exports = extend(true, {}, config, {
 
         // whether to include the source files content in the source map
         // bigger map file but no need to serve source scss files
-        sourceMapContents: false
+        sourceMapContents: false,
+
+        // info channels
+        notifications: {
+            popup: {
+                info: {
+                    icon: path.join(__dirname, 'media', 'info.png')
+                },
+                warn: {
+                    icon: path.join(__dirname, 'media', 'warn.png')
+                },
+                fail: {
+                    icon: path.join(__dirname, 'media', 'fail.png')
+                }
+            }
+        }
     },
 
     develop: {
