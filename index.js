@@ -150,7 +150,7 @@ plugin.profiles.forEach(function ( profile ) {
             // something was removed
             profile.notify({
                 info: files.map(function ( item ) {
-                    return 'delete '.green + path.relative(process.cwd(), item);
+                    return 'delete '.green + path.relative(process.cwd(), item).bold;
                 }),
                 title: 'clean',
                 message: files.map(function ( item ) {
