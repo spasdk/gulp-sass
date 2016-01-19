@@ -26,7 +26,8 @@ var /*fs       = require('fs'),
     sass   = require('node-sass'),
     del    = require('del'),
     Plugin = require('spa-gulp/lib/plugin'),
-    plugin = new Plugin({name: 'sass', entry: 'build', context: module});
+    plugin = new Plugin({name: 'sass', entry: 'build', context: module}),
+    cwd    = process.cwd();
 
 
 // rework profile
@@ -45,6 +46,7 @@ plugin.prepare = function ( name ) {
 // generate output file from profile
 plugin.build = function ( name, callback ) {
     var data   = this.config[name],
+        files  = [data.target],
         config = {};
 
     // intended location of the output file
@@ -71,6 +73,7 @@ plugin.build = function ( name, callback ) {
         if ( typeof data.sourceMap === 'string' ) {
             // source map file name
             config.sourceMap = data.sourceMap;
+            files.push(config.sourceMap);
         } else {
             // inline
             config.sourceMapEmbed = true;
@@ -80,8 +83,6 @@ plugin.build = function ( name, callback ) {
     // do the magic
     sass.render(config, function ( error, result ) {
         if ( error ) {
-            // console log + notification popup
-            //tools.error(gulpName, error.formatted.trim());
             return callback(error);
         }
 
@@ -93,10 +94,8 @@ plugin.build = function ( name, callback ) {
                 fs.writeFileSync(config.sourceMap, result.map);
             }
 
-            callback(null);
+            callback(null, files);
         } catch ( error ) {
-            // console log + notification popup
-            //tools.error(gulpName, error.message);
             callback(error);
         }
     });
@@ -111,25 +110,23 @@ plugin.profiles.forEach(function ( profile ) {
     profile.watch(
         // main entry task
         profile.task(plugin.entry, function ( done ) {
-            plugin.build(profile.name, function ( error ) {
-                //var message;
-
-                console.log(error);
-
-                /*if ( error ) {
+            plugin.build(profile.name, function ( error, result ) {
+                if ( error ) {
                     profile.notify({
                         type: 'fail',
-                        info: error.message,
+                        info: error.formatted,
                         title: plugin.entry,
-                        message: [message[0], '', message[message.length - 1]]
+                        message: [path.relative(cwd, error.file) + ' ' + error.line + ':' + error.column, '', error.message]
                     });
                 } else {
                     profile.notify({
-                        info: 'write '.green + profile.data.target,
+                        info: result.map(function ( item ) {
+                            return 'write '.green + item.bold;
+                        }),
                         title: plugin.entry,
-                        message: profile.data.target
+                        message: result
                     });
-                }*/
+                }
 
                 done();
             });
