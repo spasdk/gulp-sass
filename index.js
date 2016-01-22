@@ -10,6 +10,7 @@ var fs     = require('fs'),
     util   = require('util'),
     sass   = require('node-sass'),
     del    = require('del'),
+    loader = require('spa-component/lib/loader'),
     Plugin = require('spa-gulp/lib/plugin'),
     plugin = new Plugin({name: 'sass', entry: 'build', context: module}),
     cwd    = process.cwd();
@@ -17,12 +18,19 @@ var fs     = require('fs'),
 
 // rework profile
 plugin.prepare = function ( name ) {
-    var profile = this.config[name];
+    var profile = this.config[name],
+        files   = loader.load('-component-');
+
+    files.unshift(path.join('node_modules', 'spa-app', 'sass', 'main.scss'));
+    files.push(path.join('node_modules', 'spa-develop', 'sass', 'main.scss'));
+    files.push(profile.source);
+
+    console.log();
 
     profile.data = [];
     profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-app', 'sass', 'main.scss')));
-    profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component', 'sass', 'main.scss')));
-    profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component-page', 'sass', 'main.scss')));
+    //profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component', 'sass', 'main.scss')));
+    //profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component-page', 'sass', 'main.scss')));
     profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-develop', 'sass', 'main.scss')));
     profile.data.push(util.format('@import "%s";', profile.source));
 };
