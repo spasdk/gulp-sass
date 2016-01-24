@@ -22,17 +22,23 @@ plugin.prepare = function ( name ) {
         files   = loader.load('-component-');
 
     files.unshift(path.join('node_modules', 'spa-app', 'sass', 'main.scss'));
+    files.unshift(path.join('node_modules', 'spa-app', 'sass', 'vars', 'default.scss'));
+    files.push(path.join('node_modules', 'spa-develop', 'sass', 'vars', 'default.scss'));
     files.push(path.join('node_modules', 'spa-develop', 'sass', 'main.scss'));
     files.push(profile.source);
 
-    console.log();
+    //console.log(files);
 
     profile.data = [];
-    profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-app', 'sass', 'main.scss')));
+
+    files.forEach(function ( file ) {
+        profile.data.push(util.format('@import "%s";', file));
+    });
+    //profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-app', 'sass', 'main.scss')));
     //profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component', 'sass', 'main.scss')));
     //profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component-page', 'sass', 'main.scss')));
-    profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-develop', 'sass', 'main.scss')));
-    profile.data.push(util.format('@import "%s";', profile.source));
+    //profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-develop', 'sass', 'main.scss')));
+    //profile.data.push(util.format('@import "%s";', profile.source));
 };
 
 
