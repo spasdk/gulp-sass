@@ -9,7 +9,8 @@
 
 var path   = require('path'),
     extend = require('extend'),
-    config = require('spa-gulp/config');
+    config = require('spa-gulp/config'),
+    entry  = path.join(config.default.source, 'sass', 'main.scss');
 
 
 // base config
@@ -17,10 +18,17 @@ var path   = require('path'),
 module.exports = extend(true, {}, config, {
     default: {
         // main entry point
-        source: path.join(config.default.source, 'sass', 'main.scss'),
+        source: [
+            'spa-app',
+            'spa-component',
+            'spa-component-*',
+            entry
+        ],
 
         // intended output file
         target: path.join(config.default.target, 'css', 'release.css'),
+
+        resolution: ['default'],
 
         // output format of the final CSS style
         // options: nested, expanded, compact, compressed
@@ -66,6 +74,14 @@ module.exports = extend(true, {}, config, {
     },
 
     develop: {
+        source: [
+            'spa-app',
+            'spa-component',
+            'spa-component-*',
+            'spa-develop',
+            entry
+        ],
+
         target: path.join(config.default.target, 'css', 'develop.css'),
 
         outputStyle: 'nested',

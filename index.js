@@ -21,11 +21,11 @@ plugin.prepare = function ( name ) {
     var profile = this.config[name],
         files   = loader.load('-component-');
 
-    files.unshift(path.join('node_modules', 'spa-app', 'sass', 'main.scss'));
-    files.unshift(path.join('node_modules', 'spa-app', 'sass', 'vars', 'default.scss'));
-    files.push(path.join('node_modules', 'spa-develop', 'sass', 'vars', 'default.scss'));
-    files.push(path.join('node_modules', 'spa-develop', 'sass', 'main.scss'));
-    files.push(profile.source);
+    files.unshift(path.join('spa-app', 'sass', 'main.scss'));
+    files.unshift(path.join('spa-app', 'sass', 'vars', 'default.scss'));
+    files.push(path.join('spa-develop', 'sass', 'vars', 'default.scss'));
+    files.push(path.join('spa-develop', 'sass', 'main.scss'));
+    //files.push(profile.source);
 
     //console.log(files);
 
@@ -52,7 +52,7 @@ plugin.build = function ( name, callback ) {
     config.outFile = data.target;
 
     // array of paths that used to resolve @import declarations
-    config.includePaths = [process.env.PATH_ROOT];
+    config.includePaths = [cwd, path.join(cwd, 'node_modules')];
 
     // inherit options
     config.data              = data.data.join('\n');
