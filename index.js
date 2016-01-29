@@ -11,6 +11,7 @@ var fs     = require('fs'),
     sass   = require('node-sass'),
     del    = require('del'),
     loader = require('spa-component/lib/loader'),
+    cache  = require('./lib/cache').cache,
     Plugin = require('spa-gulp/lib/plugin'),
     plugin = new Plugin({name: 'sass', entry: 'build', context: module}),
     cwd    = process.cwd();
@@ -30,7 +31,7 @@ plugin.prepare = function ( name ) {
     //console.log(files);
 
     profile.data = [];
-
+    files = [profile.source];
     files.forEach(function ( file ) {
         profile.data.push(util.format('@import "%s";', file));
     });
@@ -45,9 +46,10 @@ plugin.prepare = function ( name ) {
 // generate output file from profile
 plugin.build = function ( name, callback ) {
     var data   = this.config[name],
-        files  = [data.target],
+        files  = [data.sass.outFile],
         config = {};
 
+    /*
     // intended location of the output file
     config.outFile = data.target;
 
@@ -56,13 +58,13 @@ plugin.build = function ( name, callback ) {
 
     // inherit options
     config.data              = data.data.join('\n');
-    config.indentType        = data.indentType;
-    config.indentWidth       = data.indentWidth;
-    config.linefeed          = data.lineBreak;
-    config.outputStyle       = data.outputStyle;
-    config.precision         = data.precision;
-    config.sourceComments    = data.sourceComments    || false;
-    config.sourceMapContents = data.sourceMapContents || false;
+    //config.indentType        = data.indentType;
+    //config.indentWidth       = data.indentWidth;
+    //config.linefeed          = data.lineBreak;
+    //config.outputStyle       = data.outputStyle;
+    //config.precision         = data.precision;
+    //config.sourceComments    = data.sourceComments    || false;
+    //config.sourceMapContents = data.sourceMapContents || false;
 
     // disable by default
     config.sourceMapEmbed = false;
@@ -77,20 +79,21 @@ plugin.build = function ( name, callback ) {
             // inline
             config.sourceMapEmbed = true;
         }
-    }
+    }/**/
 
     // do the magic
-    sass.render(config, function ( error, result ) {
+    sass.render(data.sass, function ( error, result ) {
         if ( error ) {
             return callback(error);
         }
 
         try {
             // css
-            fs.writeFileSync(config.outFile, result.css);
+            fs.writeFileSync(data.sass.outFile, result.css);
             // map
-            if ( config.sourceMap && result.map ) {
-                fs.writeFileSync(config.sourceMap, result.map);
+            if ( data.sass.sourceMap && result.map ) {
+                fs.writeFileSync(data.sass.sourceMap, result.map);
+                files.push(data.sass.sourceMap);
             }
 
             callback(null, files);
@@ -104,7 +107,7 @@ plugin.build = function ( name, callback ) {
 // create tasks for profiles
 plugin.profiles.forEach(function ( profile ) {
     // add source data
-    plugin.prepare(profile.name);
+    //plugin.prepare(profile.name);
 
     profile.watch(
         // main entry task
@@ -131,6 +134,38 @@ plugin.profiles.forEach(function ( profile ) {
             });
         })
     );
+
+    // generate profile cache file
+    profile.task('cache', function ( done ) {
+        var file = path.join(profile.data.cache, profile.name + '.scss');
+
+        fs.writeFile(
+            file,
+            cache({
+                path:    profile.data.cache,
+                prefix:  'spa',
+                target:  profile.name,
+                develop: profile.data.develop
+            }),
+            function ( error ) {
+                if ( error ) {
+                    profile.notify({
+                        type: 'fail',
+                        title: 'cache',
+                        message: error.message
+                    });
+                } else {
+                    profile.notify({
+                        info: 'write '.green + file,
+                        title: 'cache',
+                        message: file
+                    });
+                }
+
+                done();
+            }
+        );
+    });
 
     // remove the generated file
     profile.task('clean', function () {
