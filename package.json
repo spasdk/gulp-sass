@@ -12,10 +12,9 @@
         "jsdoc": "jsdoc --destination doc *.js readme.md"
     },
     "dependencies": {
-        "del": "2.*.*",
+        "cjs-async": "1.*.*",
         "extend": "3.*.*",
-        "node-sass": "3.*.*",
-        "spa-gulp": "spasdk/gulp"
+        "node-sass": "3.*.*"
     },
     "keywords": [
         "spa",

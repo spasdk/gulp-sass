@@ -9,7 +9,7 @@
 
 var path      = require('path'),
     extend    = require('extend'),
-    config    = require('spa-gulp/config'),
+    config    = require('spasdk/config'),
     srcPath   = path.join(config.source, 'sass'),
     dstPath   = path.join(config.target, 'css'),
     cachePath = path.join(srcPath, '.cache'),
@@ -84,9 +84,6 @@ profiles.default = extend(true, {}, config, {
 
 
 profiles.develop = extend(true, {}, profiles.default, {
-    // intended output file
-    //target: path.join(config.target, 'css', 'develop.css'),
-
     // use additional develop styles
     develop: true,
 
