@@ -9,11 +9,11 @@ var fs     = require('fs'),
     path   = require('path'),
     util   = require('util'),
     sass   = require('node-sass'),
-    del    = require('del'),
+    async  = require('cjs-async'),
     loader = require('spa-component/lib/loader'),
     cache  = require('./lib/cache').cache,
-    Plugin = require('spa-gulp/lib/plugin'),
-    plugin = new Plugin({name: 'sass', entry: 'build', context: module}),
+    Plugin = require('spasdk/lib/plugin'),
+    plugin = new Plugin({name: 'sass', entry: 'build', config: require('./config')}),
     cwd    = process.cwd();
 
 
@@ -46,7 +46,6 @@ plugin.prepare = function ( name ) {
 // generate output file from profile
 plugin.build = function ( name, callback ) {
     var data   = this.config[name],
-        files  = [data.sass.outFile],
         config = {};
 
     /*
@@ -83,23 +82,30 @@ plugin.build = function ( name, callback ) {
 
     // do the magic
     sass.render(data.sass, function ( error, result ) {
+        var tasks = [];
+
         if ( error ) {
             return callback(error);
         }
 
-        try {
-            // css
-            fs.writeFileSync(data.sass.outFile, result.css);
-            // map
-            if ( data.sass.sourceMap && result.map ) {
-                fs.writeFileSync(data.sass.sourceMap, result.map);
-                files.push(data.sass.sourceMap);
-            }
+        // to save css
+        tasks.push(function ( done ) {
+            fs.writeFile(data.sass.outFile, result.css, function ( error ) {
+                done(error, path.relative(cwd, data.sass.outFile));
+            });
+        });
 
-            callback(null, files);
-        } catch ( error ) {
-            callback(error);
+        // to save map
+        if ( data.sass.sourceMap && result.map ) {
+            tasks.push(function ( done ) {
+                fs.writeFile(data.sass.sourceMap, result.map, function ( error ) {
+                    done(error, path.relative(cwd, data.sass.sourceMap));
+                });
+            });
         }
+
+        // save files
+        async.parallel(tasks, callback);
     });
 };
 
@@ -118,15 +124,15 @@ plugin.profiles.forEach(function ( profile ) {
                         type: 'fail',
                         info: error.formatted,
                         title: plugin.entry,
-                        message: [path.relative(cwd, error.file) + ' ' + error.line + ':' + error.column, '', error.message]
+                        message: path.relative(cwd, error.file) + ' ' + error.line + ':' + error.column + ' ' + error.message
                     });
                 } else {
-                    profile.notify({
-                        info: result.map(function ( item ) {
-                            return 'write '.green + item.bold;
-                        }),
-                        title: plugin.entry,
-                        message: result
+                    result.forEach(function ( file ) {
+                        profile.notify({
+                            info: 'write '.green + file.bold,
+                            title: plugin.entry,
+                            message: result
+                        });
                     });
                 }
 
@@ -168,27 +174,28 @@ plugin.profiles.forEach(function ( profile ) {
     });
 
     // remove the generated file
-    profile.task('clean', function () {
-        var files = [profile.data.target];
+    profile.task('clean', function ( done ) {
+        var files = [profile.data.sass.outFile];
 
-        if ( typeof profile.data.sourceMap === 'string' ) {
-            files.push(profile.data.sourceMap);
+        if ( typeof profile.data.sass.sourceMap === 'string' ) {
+            files.push(profile.data.sass.sourceMap);
         }
 
-        files = del.sync(files);
+        // remove files
+        async.parallel(files.map(function ( file ) {
+            return function ( ready ) {
+                fs.unlink(file, function ( error ) {
+                    profile.notify({
+                        type: error ? 'warn' : 'info',
+                        info: error ? error.toString().red : 'delete '.green + file,
+                        title: 'clean',
+                        message: error ? error.toString() : file
+                    });
+                });
 
-        if ( files.length ) {
-            // something was removed
-            profile.notify({
-                info: files.map(function ( item ) {
-                    return 'delete '.green + path.relative(process.cwd(), item).bold;
-                }),
-                title: 'clean',
-                message: files.map(function ( item ) {
-                    return path.relative(process.cwd(), item);
-                })
-            });
-        }
+                ready();
+            };
+        }), done);
     });
 });
 
