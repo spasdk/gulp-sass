@@ -10,7 +10,7 @@ var fs     = require('fs'),
     util   = require('util'),
     sass   = require('node-sass'),
     async  = require('cjs-async'),
-    loader = require('spa-component/lib/loader'),
+    //loader = require('spa-component/lib/loader'),
     cache  = require('./lib/cache').cache,
     Plugin = require('spasdk/lib/plugin'),
     plugin = new Plugin({name: 'sass', entry: 'build', config: require('./config')}),
@@ -145,32 +145,34 @@ plugin.profiles.forEach(function ( profile ) {
     profile.task('cache', function ( done ) {
         var file = path.join(profile.data.cache, profile.name + '.scss');
 
-        fs.writeFile(
-            file,
-            cache({
-                path:    profile.data.cache,
-                prefix:  'spa',
-                target:  profile.name,
-                develop: profile.data.develop
-            }),
-            function ( error ) {
-                if ( error ) {
-                    profile.notify({
-                        type: 'fail',
-                        title: 'cache',
-                        message: error.message
-                    });
-                } else {
-                    profile.notify({
-                        info: 'write '.green + file,
-                        title: 'cache',
-                        message: file
-                    });
-                }
+        fs.mkdir(profile.data.cache, function () {
+            fs.writeFile(
+                file,
+                cache({
+                    path:    profile.data.cache,
+                    prefix:  'spa',
+                    target:  profile.name,
+                    develop: profile.data.develop
+                }),
+                function ( error ) {
+                    if ( error ) {
+                        profile.notify({
+                            type: 'fail',
+                            title: 'cache',
+                            message: error.message
+                        });
+                    } else {
+                        profile.notify({
+                            info: 'write '.green + file,
+                            title: 'cache',
+                            message: file
+                        });
+                    }
 
-                done();
-            }
-        );
+                    done();
+                }
+            );
+        });
     });
 
     // remove the generated file
