@@ -129,9 +129,8 @@ plugin.profiles.forEach(function ( profile ) {
                 } else {
                     result.forEach(function ( file ) {
                         profile.notify({
-                            info: 'write '.green + file.bold,
                             title: plugin.entry,
-                            message: result
+                            message: 'write ' + file
                         });
                     });
                 }
@@ -163,9 +162,8 @@ plugin.profiles.forEach(function ( profile ) {
                         });
                     } else {
                         profile.notify({
-                            info: 'write '.green + file,
                             title: 'cache',
-                            message: file
+                            message: 'write ' + file
                         });
                     }
 
@@ -189,9 +187,8 @@ plugin.profiles.forEach(function ( profile ) {
                 fs.unlink(file, function ( error ) {
                     profile.notify({
                         type: error ? 'warn' : 'info',
-                        info: error ? error.toString().red : 'delete '.green + file,
                         title: 'clean',
-                        message: error ? error.toString() : file
+                        message: error ? error : 'delete ' + file
                     });
                 });
 
