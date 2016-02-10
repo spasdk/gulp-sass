@@ -70,6 +70,12 @@ profiles.default = extend(true, {}, config, {
         sourceMapEmbed: false
     },
 
+    // false to prevent watch task creation
+    // otherwise array of globs to monitor
+    watch: [
+        path.join(srcPath, '**', '*.scss')
+    ],
+
     // info channels
     notifications: {
         popup: {
@@ -97,13 +103,7 @@ profiles.develop = extend(true, {}, profiles.default, {
         // the writing location for the source map file
         // options: file name, true - inline source map, false - disable
         sourceMap: path.join(dstPath, 'develop.map')
-    },
-
-    // false to prevent watch task creation
-    // otherwise array of globs to monitor
-    watch: [
-        path.join(srcPath, '**', '*.scss')
-    ]
+    }
 });
 
 
