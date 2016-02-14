@@ -25,6 +25,9 @@ profiles.default = extend(true, {}, config, {
     // dir for temp files
     cache: cachePath,
 
+    // dir for js temp files
+    jsCache: path.join(config.source, 'js', '.cache'),
+
     // use additional develop styles
     develop: false,
 
