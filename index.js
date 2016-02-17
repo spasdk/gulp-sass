@@ -11,7 +11,7 @@ var fs     = require('fs'),
     sass   = require('node-sass'),
     async  = require('cjs-async'),
     //loader = require('spa-component/lib/loader'),
-    cache  = require('./lib/cache').cache,
+    cache  = require('./lib/cache'),
     Plugin = require('spasdk/lib/plugin'),
     plugin = new Plugin({name: 'sass', entry: 'build', config: require('./config')}),
     cwd    = process.cwd();
@@ -144,15 +144,18 @@ plugin.profiles.forEach(function ( profile ) {
     profile.task('cache', function ( done ) {
         var file = path.join(profile.data.cache, profile.name + '.scss');
 
+        //console.log(profile.data.variables);
+
         fs.mkdir(profile.data.cache, function () {
             fs.writeFile(
                 file,
-                cache({
+                util.format('$DEVELOP: %s;\n', profile.data.variables.DEVELOP) +
+                cache(/*{
                     path:    profile.data.cache,
                     prefix:  'spa',
                     target:  profile.name,
                     develop: profile.data.develop
-                }),
+                }*/profile.data) + '\n',
                 function ( error ) {
                     if ( error ) {
                         profile.notify({

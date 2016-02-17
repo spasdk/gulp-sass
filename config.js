@@ -25,11 +25,16 @@ profiles.default = extend(true, {}, config, {
     // dir for temp files
     cache: cachePath,
 
-    // dir for js temp files
-    jsCache: path.join(config.source, 'js', '.cache'),
+    // js require map file
+    jsCache: path.join(config.source, 'js', '.cache', 'default.json'),
 
-    // use additional develop styles
-    develop: false,
+    varsFile: 'vars.scss',
+    mainFile: 'main.scss',
+
+    // local variables available in source files
+    variables: {
+        DEVELOP: false
+    },
 
     // compiler config
     sass: {
@@ -91,11 +96,19 @@ profiles.default = extend(true, {}, config, {
 
 
 profiles.develop = extend(true, {}, profiles.default, {
-    // use additional develop styles
-    develop: true,
+    // js require map file
+    jsCache: path.join(config.source, 'js', '.cache', 'develop.json'),
+
+    // local variables available in source files
+    variables: {
+        DEVELOP: true
+    },
 
     // compiler config
     sass: {
+        // path to a file for LibSass to render
+        file: path.join(cachePath, 'develop.scss'),
+
         // the intended location of the output file
         outFile: path.join(dstPath, 'develop.css'),
 
