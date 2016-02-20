@@ -11,8 +11,12 @@ var path      = require('path'),
     srcPath   = path.join(config.source, 'sass'),
     dstPath   = path.join(config.target, 'css'),
     cachePath = path.join(srcPath, '.cache'),
-    profiles  = {};
+    profiles  = {},
+    jsCache;
 
+
+// map
+jsCache = path.join(config.source, 'js', '.cache', 'default.json');
 
 // main
 profiles.default = extend(true, {}, config, {
@@ -26,7 +30,7 @@ profiles.default = extend(true, {}, config, {
     cache: cachePath,
 
     // js require map file
-    jsCache: path.join(config.source, 'js', '.cache', 'default.json'),
+    jsCache: jsCache,
 
     varsFile: 'vars.scss',
     mainFile: 'main.scss',
@@ -80,9 +84,10 @@ profiles.default = extend(true, {}, config, {
 
     // false to prevent watch task creation
     // otherwise array of globs to monitor
-    watch: [
-        path.join(srcPath, '**', '*.scss')
-    ],
+    watch: {
+        scss:  [path.join(srcPath, '**', '*.scss')],
+        cache: [jsCache]
+    },
 
     // info channels
     notifications: {
@@ -94,10 +99,12 @@ profiles.default = extend(true, {}, config, {
     }
 });
 
+// map
+jsCache = path.join(config.source, 'js', '.cache', 'develop.json');
 
 profiles.develop = extend(true, {}, profiles.default, {
     // js require map file
-    jsCache: path.join(config.source, 'js', '.cache', 'develop.json'),
+    jsCache: jsCache,
 
     // local variables available in source files
     variables: {
@@ -119,6 +126,12 @@ profiles.develop = extend(true, {}, profiles.default, {
         // the writing location for the source map file
         // options: file name, true - inline source map, false - disable
         sourceMap: path.join(dstPath, 'develop.map')
+    },
+
+    // false to prevent watch task creation
+    // otherwise array of globs to monitor
+    watch: {
+        cache: [jsCache]
     }
 });
 

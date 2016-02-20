@@ -115,7 +115,7 @@ plugin.profiles.forEach(function ( profile ) {
     // add source data
     //plugin.prepare(profile.name);
 
-    profile.watch(
+    profile.watch('scss', profile.data.watch.scss,
         // main entry task
         profile.task(plugin.entry, function ( done ) {
             plugin.build(profile.name, function ( error, result ) {
@@ -140,41 +140,43 @@ plugin.profiles.forEach(function ( profile ) {
         })
     );
 
-    // generate profile cache file
-    profile.task('cache', function ( done ) {
-        var file = path.join(profile.data.cache, profile.name + '.scss');
+    profile.watch('cache', profile.data.watch.cache,
+        // generate profile cache file
+        profile.task('cache', function ( done ) {
+            var file = path.join(profile.data.cache, profile.name + '.scss');
 
-        //console.log(profile.data.variables);
+            //console.log(profile.data.variables);
 
-        fs.mkdir(profile.data.cache, function () {
-            fs.writeFile(
-                file,
-                util.format('$DEVELOP: %s;\n', profile.data.variables.DEVELOP) +
-                cache(/*{
-                    path:    profile.data.cache,
-                    prefix:  'spa',
-                    target:  profile.name,
-                    develop: profile.data.develop
-                }*/profile.data) + '\n',
-                function ( error ) {
-                    if ( error ) {
-                        profile.notify({
-                            type: 'fail',
-                            title: 'cache',
-                            message: error.message
-                        });
-                    } else {
-                        profile.notify({
-                            title: 'cache',
-                            message: 'write ' + file
-                        });
+            fs.mkdir(profile.data.cache, function () {
+                fs.writeFile(
+                    file,
+                    util.format('$DEVELOP: %s;\n\n', profile.data.variables.DEVELOP) +
+                    cache(/*{
+                        path:    profile.data.cache,
+                        prefix:  'spa',
+                        target:  profile.name,
+                        develop: profile.data.develop
+                    }*/profile.data) + '\n',
+                    function ( error ) {
+                        if ( error ) {
+                            profile.notify({
+                                type: 'fail',
+                                title: 'cache',
+                                message: error.message
+                            });
+                        } else {
+                            profile.notify({
+                                title: 'cache',
+                                message: 'write ' + file
+                            });
+                        }
+
+                        done();
                     }
-
-                    done();
-                }
-            );
-        });
-    });
+                );
+            });
+        })
+    );
 
     // remove the generated file
     profile.task('clean', function ( done ) {
