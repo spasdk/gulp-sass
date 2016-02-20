@@ -130,7 +130,7 @@ plugin.profiles.forEach(function ( profile ) {
                     result.forEach(function ( file ) {
                         profile.notify({
                             title: plugin.entry,
-                            message: 'write ' + file
+                            info: 'write ' + file
                         });
                     });
                 }
@@ -162,12 +162,13 @@ plugin.profiles.forEach(function ( profile ) {
                             profile.notify({
                                 type: 'fail',
                                 title: 'cache',
+                                info: 'write ' + file,
                                 message: error.message
                             });
                         } else {
                             profile.notify({
                                 title: 'cache',
-                                message: 'write ' + file
+                                info: 'write ' + file
                             });
                         }
 
@@ -193,7 +194,8 @@ plugin.profiles.forEach(function ( profile ) {
                     profile.notify({
                         type: error ? 'warn' : 'info',
                         title: 'clean',
-                        message: error ? error : 'delete ' + file
+                        info: 'delete ' + file,
+                        message: error ? error.message : ''
                     });
                 });
 
