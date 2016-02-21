@@ -18,7 +18,7 @@ var fs     = require('fs'),
 
 
 // rework profile
-plugin.prepare = function ( name ) {
+/*plugin.prepare = function ( name ) {
     var profile = this.config[name],
         files   = loader.load('-component-');
 
@@ -40,13 +40,13 @@ plugin.prepare = function ( name ) {
     //profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-component-page', 'sass', 'main.scss')));
     //profile.data.push(util.format('@import "%s";', path.join('node_modules', 'spa-develop', 'sass', 'main.scss')));
     //profile.data.push(util.format('@import "%s";', profile.source));
-};
+};*/
 
 
 // generate output file from profile
 plugin.build = function ( name, callback ) {
-    var data   = this.config[name],
-        config = {};
+    var data   = this.config[name];
+        //config = {};
 
     /*
     // intended location of the output file
@@ -85,7 +85,8 @@ plugin.build = function ( name, callback ) {
         var tasks = [];
 
         if ( error ) {
-            return callback(error);
+            callback(error);
+            return;
         }
 
         // to save css
