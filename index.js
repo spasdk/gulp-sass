@@ -116,69 +116,73 @@ plugin.profiles.forEach(function ( profile ) {
     // add source data
     //plugin.prepare(profile.name);
 
-    profile.watch('scss', profile.data.watch.scss,
-        // main entry task
-        profile.task(plugin.entry, function ( done ) {
-            plugin.build(profile.name, function ( error, result ) {
-                if ( error ) {
-                    profile.notify({
-                        type: 'fail',
-                        info: error.formatted,
-                        title: plugin.entry,
-                        message: path.relative(cwd, error.file) + ' ' + error.line + ':' + error.column + ' ' + error.message
-                    });
-                } else {
-                    result.forEach(function ( file ) {
+    if ( profile.data.watch && profile.data.watch.scss ) {
+        profile.watch('scss', profile.data.watch.scss,
+            // main entry task
+            profile.task(plugin.entry, function ( done ) {
+                plugin.build(profile.name, function ( error, result ) {
+                    if ( error ) {
                         profile.notify({
+                            type: 'fail',
+                            info: error.formatted,
                             title: plugin.entry,
-                            info: 'write ' + file
+                            message: path.relative(cwd, error.file) + ' ' + error.line + ':' + error.column + ' ' + error.message
                         });
-                    });
-                }
-
-                done();
-            });
-        })
-    );
-
-    profile.watch('cache', profile.data.watch.cache,
-        // generate profile cache file
-        profile.task('cache', function ( done ) {
-            var file = path.join(profile.data.cache, profile.name + '.scss');
-
-            //console.log(profile.data.variables);
-
-            fs.mkdir(profile.data.cache, function () {
-                fs.writeFile(
-                    file,
-                    util.format('$DEVELOP: %s;\n\n', profile.data.variables.DEVELOP) +
-                    cache(/*{
-                        path:    profile.data.cache,
-                        prefix:  'spa',
-                        target:  profile.name,
-                        develop: profile.data.develop
-                    }*/profile.data) + '\n',
-                    function ( error ) {
-                        if ( error ) {
+                    } else {
+                        result.forEach(function ( file ) {
                             profile.notify({
-                                type: 'fail',
-                                title: 'cache',
-                                info: 'write ' + file,
-                                message: error.message
-                            });
-                        } else {
-                            profile.notify({
-                                title: 'cache',
+                                title: plugin.entry,
                                 info: 'write ' + file
                             });
-                        }
-
-                        done();
+                        });
                     }
-                );
-            });
-        })
-    );
+
+                    done();
+                });
+            })
+        );
+    }
+
+    if ( profile.data.watch && profile.data.watch.cache ) {
+        profile.watch('cache', profile.data.watch.cache,
+            // generate profile cache file
+            profile.task('cache', function ( done ) {
+                var file = path.join(profile.data.cache, profile.name + '.scss');
+
+                //console.log(profile.data.variables);
+
+                fs.mkdir(profile.data.cache, function () {
+                    fs.writeFile(
+                        file,
+                        util.format('$DEVELOP: %s;\n\n', profile.data.variables.DEVELOP) +
+                        cache(/*{
+                         path:    profile.data.cache,
+                         prefix:  'spa',
+                         target:  profile.name,
+                         develop: profile.data.develop
+                         }*/profile.data) + '\n',
+                        function ( error ) {
+                            if ( error ) {
+                                profile.notify({
+                                    type: 'fail',
+                                    title: 'cache',
+                                    info: 'write ' + file,
+                                    message: error.message
+                                });
+                            } else {
+                                profile.notify({
+                                    title: 'cache',
+                                    info: 'write ' + file
+                                });
+                            }
+
+                            done();
+                        }
+                    );
+                });
+            })
+        );
+    }
 
     // remove the generated file
     profile.task('clean', function ( done ) {
