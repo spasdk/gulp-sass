@@ -7,7 +7,7 @@
 
 var path      = require('path'),
     extend    = require('extend'),
-    config    = require('spasdk/config'),
+    config    = require('spa-plugin/config'),
     srcPath   = path.join(config.source, 'sass'),
     dstPath   = path.join(config.target, 'css'),
     cachePath = path.join(srcPath, '.cache'),
@@ -85,7 +85,7 @@ profiles.default = extend(true, {}, config, {
     // false to prevent watch task creation
     // otherwise array of globs to monitor
     watch: {
-        scss:  [path.join(srcPath, '**', '*.scss')],
+        build: [path.join(srcPath, '**', '*.scss')],
         cache: [jsCache]
     },
 

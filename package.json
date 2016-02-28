@@ -14,7 +14,8 @@
     "dependencies": {
         "cjs-async": "cjssdk/async",
         "extend": "3.*.*",
-        "node-sass": "3.*.*"
+        "node-sass": "3.*.*",
+        "spa-plugin": "spasdk/plugin"
     },
     "keywords": [
         "spa",
