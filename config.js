@@ -117,7 +117,7 @@ profiles.develop = extend(true, {}, profiles.release, {
         file: path.join(srcPath, 'develop.scss'),
 
         // the intended location of the output file
-        outFile: path.join(dstPath, 'develop.css'),
+        outFile: path.join(dstPath, 'develop.css')
 
         // output format of the final CSS style
         // options: nested, expanded, compact, compressed
@@ -125,7 +125,8 @@ profiles.develop = extend(true, {}, profiles.release, {
 
         // the writing location for the source map file
         // options: file name, true - inline source map, false - disable
-        sourceMap: path.join(dstPath, 'develop.map')
+        // todo: investigate and remove or activate
+        /*sourceMap: path.join(dstPath, 'develop.map')*/
     }
 
     // false to prevent watch task creation
