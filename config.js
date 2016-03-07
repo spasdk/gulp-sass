@@ -9,14 +9,14 @@ var path      = require('path'),
     extend    = require('extend'),
     config    = require('spa-plugin/config'),
     srcPath   = path.join(config.source, 'sass'),
-    dstPath   = path.join(config.target, 'css'),
-    cachePath = path.join(srcPath, '.cache'),
-    profiles  = {},
-    jsCache;
+    dstPath   = path.join(config.source, 'css'),
+    //cachePath = path.join(srcPath, '.cache'),
+    profiles  = {};
+    //jsCache;
 
 
 // map
-jsCache = path.join(config.source, 'js', '.cache', 'default.json');
+//jsCache = path.join(config.source, 'js', '.cache', 'default.json');
 
 // main
 profiles.default = extend(true, {}, config, {
@@ -27,23 +27,23 @@ profiles.default = extend(true, {}, config, {
     target: dstPath,
 
     // dir for temp files
-    cache: cachePath,
+    //cache: cachePath,
 
     // js require map file
-    jsCache: jsCache,
+    //jsCache: jsCache,
 
-    varsFile: 'vars.scss',
-    mainFile: 'main.scss',
+    //varsFile: 'vars.scss',
+    //mainFile: 'main.scss',
 
     // local variables available in source files
-    variables: {
-        DEVELOP: false
-    },
+    //variables: {
+    //    DEVELOP: false
+    //},
 
     // compiler config
     sass: {
         // path to a file for LibSass to render
-        file: path.join(cachePath, 'default.scss'),
+        file: path.join(srcPath, 'release.scss'),
 
         // the intended location of the output file
         outFile: path.join(dstPath, 'release.css'),
@@ -53,7 +53,7 @@ profiles.default = extend(true, {}, config, {
 
         // output format of the final CSS style
         // options: nested, expanded, compact, compressed
-        outputStyle: 'compressed',
+        outputStyle: 'nested',
 
         // whether to use space or tab character for indentation
         indentType: 'space',
@@ -84,10 +84,10 @@ profiles.default = extend(true, {}, config, {
 
     // false to prevent watch task creation
     // otherwise array of globs to monitor
-    watch: {
+    watch: [path.join(srcPath, '**', '*.scss')], /*{
         build: [path.join(srcPath, '**', '*.scss')],
         cache: [jsCache]
-    },
+    }*/
 
     // info channels
     notifications: {
@@ -100,39 +100,39 @@ profiles.default = extend(true, {}, config, {
 });
 
 // map
-jsCache = path.join(config.source, 'js', '.cache', 'develop.json');
+//jsCache = path.join(config.source, 'js', '.cache', 'develop.json');
 
 profiles.develop = extend(true, {}, profiles.default, {
     // js require map file
-    jsCache: jsCache,
+    //jsCache: jsCache,
 
     // local variables available in source files
-    variables: {
-        DEVELOP: true
-    },
+    //variables: {
+    //    DEVELOP: true
+    //},
 
     // compiler config
     sass: {
         // path to a file for LibSass to render
-        file: path.join(cachePath, 'develop.scss'),
+        file: path.join(srcPath, 'develop.scss'),
 
         // the intended location of the output file
         outFile: path.join(dstPath, 'develop.css'),
 
         // output format of the final CSS style
         // options: nested, expanded, compact, compressed
-        outputStyle: 'nested',
+        //outputStyle: 'nested',
 
         // the writing location for the source map file
         // options: file name, true - inline source map, false - disable
         sourceMap: path.join(dstPath, 'develop.map')
-    },
+    }
 
     // false to prevent watch task creation
     // otherwise array of globs to monitor
-    watch: {
-        cache: [jsCache]
-    }
+    //watch: {
+    //    cache: [jsCache]
+    //}
 });
 
 
