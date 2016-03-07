@@ -19,7 +19,7 @@ var path      = require('path'),
 //jsCache = path.join(config.source, 'js', '.cache', 'default.json');
 
 // main
-profiles.default = extend(true, {}, config, {
+profiles.release = extend(true, {}, config, {
     // source files location
     source: srcPath,
 
@@ -102,7 +102,7 @@ profiles.default = extend(true, {}, config, {
 // map
 //jsCache = path.join(config.source, 'js', '.cache', 'develop.json');
 
-profiles.develop = extend(true, {}, profiles.default, {
+profiles.develop = extend(true, {}, profiles.release, {
     // js require map file
     //jsCache: jsCache,
 
