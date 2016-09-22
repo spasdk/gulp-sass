@@ -9,7 +9,7 @@ var path      = require('path'),
     extend    = require('extend'),
     config    = require('spa-plugin/config'),
     srcPath   = path.join(config.source, 'sass'),
-    dstPath   = path.join(config.source, 'css'),
+    dstPath   = path.join(config.target, 'css'),
     //cachePath = path.join(srcPath, '.cache'),
     profiles  = {};
     //jsCache;
@@ -46,7 +46,7 @@ profiles.release = extend(true, {}, config, {
         file: path.join(srcPath, 'release.scss'),
 
         // the intended location of the output file
-        outFile: path.join(dstPath, 'release.css'),
+        outFile: path.join(dstPath, 'release.app.css'),
 
         // paths to resolve @import declarations
         includePaths: [],
@@ -117,7 +117,7 @@ profiles.develop = extend(true, {}, profiles.release, {
         file: path.join(srcPath, 'develop.scss'),
 
         // the intended location of the output file
-        outFile: path.join(dstPath, 'develop.css')
+        outFile: path.join(dstPath, 'develop.app.css'),
 
         // output format of the final CSS style
         // options: nested, expanded, compact, compressed
@@ -125,8 +125,7 @@ profiles.develop = extend(true, {}, profiles.release, {
 
         // the writing location for the source map file
         // options: file name, true - inline source map, false - disable
-        // todo: investigate and remove or activate
-        /*sourceMap: path.join(dstPath, 'develop.map')*/
+        sourceMap: path.join(dstPath, 'develop.app.map')
     }
 
     // false to prevent watch task creation
