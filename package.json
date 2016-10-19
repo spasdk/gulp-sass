@@ -16,7 +16,7 @@
         "jsdoc": "jsdoc --destination doc *.js readme.md"
     },
     "dependencies": {
-        "cjs-async": "cjssdk/async",
+        "cjs-async": "1.*.*",
         "extend": "3.*.*",
         "node-sass": "3.*.*",
         "spa-plugin": "spasdk/plugin"
