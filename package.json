@@ -19,7 +19,7 @@
         "cjs-async": "1.*.*",
         "extend": "3.*.*",
         "node-sass": "3.*.*",
-        "spa-plugin": "spasdk/plugin"
+        "spa-plugin": "1.*.*"
     },
     "devDependencies": {
         "eslint": "3.*.*",
