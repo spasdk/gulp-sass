@@ -18,7 +18,7 @@
     "dependencies": {
         "cjs-async": "1.*.*",
         "extend": "3.*.*",
-        "node-sass": "3.*.*",
+        "node-sass": "4.*.*",
         "spa-plugin": "1.*.*"
     },
     "devDependencies": {
